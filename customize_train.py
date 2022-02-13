@@ -5,23 +5,30 @@ from data_loaded import train_loader,valid_loader
 n_total_steps=len(train_loader)# used to support to calculate the step accuracy
 
 model,criterion,optimizer=run_test_model()
-
+test0=1
 for epoch in range(N_EPOCHS):
    for i, (images, labels) in enumerate(train_loader):
+       
        images=images.to(DEVICE)
        labels=labels.to(DEVICE)
        #forward pass
        outputs=model(images)
+       if test0:
+           print('In test 0')
+           print('images size:',images.detach().to('cpu').numpy().shape)
+           print('labels size:',labels.detach().to('cpu').numpy().shape)
+           print('outputs size:',outputs.detach().to('cpu').numpy().shape)
+           test0=0
        loss=criterion(outputs,labels)
        #backward and optimize
        optimizer.zero_grad()
        loss.backward()
        optimizer.step()
-
-       if(i+1)%100==0:
+      
+       if(i+1)%1000==0:
            print(f'Epoch[{epoch+1}/{N_EPOCHS}],Step[{i+1}/{n_total_steps}], Loss:{loss.item():.4f}')
 print('Finished Training')
-
+##we want to save the train.
 with torch.no_grad():
     n_correct=0
     n_samples=0
