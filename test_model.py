@@ -11,7 +11,8 @@ class test_model(nn.Module):
         x=self.pool(F.sigmoid(self.conv1(x)))
         x=F.sigmoid(self.conv2(x))
         #x=F.sigmoid(self.conv2(x))
-        x=x.view(-1,10)
+        #x=x.view(-1,10)
+        x=torch.flatten(x,1)
         x=self.fc1(x)
         return x
 def run_test_model():

@@ -1,8 +1,8 @@
 # parameters
 from alex_lib import torch
 RANDOM_SEED = 42
-LEARNING_RATE = 0.02
-BATCH_SIZE = 8
+LEARNING_RATE = 0.002
+BATCH_SIZE = 20
 N_EPOCHS = 3
 
 IMG_SIZE = 32
