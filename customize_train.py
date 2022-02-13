@@ -41,5 +41,5 @@ with torch.no_grad():
         _,predicted=torch.max(outputs,1)
         n_samples+=labels.size(0)
         n_correct+=(predicted==labels).sum().item()
-        acc=100*n_correct/n_samples
+    acc=100*n_correct/n_samples
     print(f'Accuracy of the network:{acc}%')
