@@ -48,10 +48,8 @@ if test1:
         if i<5:
             print('###images:',images.detach().numpy(),'###images:',images.detach().numpy().shape)#batch size 个副图的数据
             x=images.detach().numpy()
-            for k,n in enumerate(x):
-                if n.any()>max:
-                    max=n
-            print(f'in{i} group the max is{max}')
+            print(x.shape)
+            
             print('@@@labels:',labels)#32个tensor
             print('###################################')
         index+=1

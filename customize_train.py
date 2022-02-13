@@ -8,7 +8,9 @@ model,criterion,optimizer=run_test_model()
 test0=1
 for epoch in range(N_EPOCHS):
    for i, (images, labels) in enumerate(train_loader):
-       
+       #this for gives a batch at a time 
+       #if batch is 20 and image size is 32,32, then the shape of images is 
+       #20,1,32,32
        images=images.to(DEVICE)
        labels=labels.to(DEVICE)
        #forward pass
