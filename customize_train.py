@@ -2,6 +2,7 @@ from alex_model import*
 from test_model import*
 from config import BATCH_SIZE, N_EPOCHS
 from data_loaded import train_loader,valid_loader
+from save_load_network import FILE,save_all
 n_total_steps=len(train_loader)# used to support to calculate the step accuracy
 
 model,criterion,optimizer=run_test_model()
@@ -43,3 +44,4 @@ with torch.no_grad():
         n_correct+=(predicted==labels).sum().item()
     acc=100*n_correct/n_samples
     print(f'Accuracy of the network:{acc}%')
+save_all(model,FILE)
