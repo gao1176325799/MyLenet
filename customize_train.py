@@ -6,7 +6,7 @@ from save_load_network import FILE,save_all
 n_total_steps=len(train_loader)# used to support to calculate the step accuracy
 
 model,criterion,optimizer=run_test_model()
-test0=1
+test0=0
 for epoch in range(N_EPOCHS):
    for i, (images, labels) in enumerate(train_loader):
        #this for gives a batch at a time 

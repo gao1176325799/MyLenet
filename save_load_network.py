@@ -1,5 +1,4 @@
-from train import*
-
+from alex_lib import torch
 FILE="model.pth"
 method=0
 #0-> not save 
@@ -7,7 +6,7 @@ method=0
 #2-> save only state dict
 def save_all(model,file):
     torch.save(model, file)
-def load_all(model,file):
+def load_all(file):
     loaded_model=torch.load(FILE)
     loaded_model.eval()
     return loaded_model
