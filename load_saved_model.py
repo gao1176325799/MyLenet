@@ -6,16 +6,7 @@ import matplotlib.pyplot as plt
 loaded_model=load_all(FILE)
 #loaded_model.eval()
 print(loaded_model)
-for name, param in loaded_model.named_parameters():
-    if name=='conv1.weight':
-        print('conv1 weight shape is',param.shape)
-        out_f,in_f,k_H,k_W=param.shape
-        print(out_f,in_f,k_H,k_W)
-        total_num_weight=out_f*in_f*k_H*k_W
-        p=param.detach().to('cpu').numpy()
-        print(p[0][0][0][0])
-        print(param[0][0][0][0].detach().to('cpu').numpy())
-        
+
 with torch.no_grad():
     for name, param in loaded_model.named_parameters():
         if name=='conv1.weight':
@@ -25,13 +16,17 @@ with torch.no_grad():
             print(param[0][0][0][0].detach().to('cpu').numpy())
             param[0][0][0][0]=0.1
             print(param[0][0][0][0].detach().to('cpu').numpy())
+            for i in range(out_f):
+                for k in range(in_f):
+                    for j in range(k_H):
+                        for l in range(k_W):
+                            param[i][k][j][l]=0.1
 
 
 
 
 
-
-test0=0
+test0=1
 test1=0
 if test0:
     with torch.no_grad():
