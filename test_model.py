@@ -9,7 +9,6 @@ class test_model(nn.Module):
         self.fc1=nn.Linear(80,10)
     def forward(self,x):
         x=self.pool(F.sigmoid(self.conv1(x)))
-        print(x.weight.shape)
         x=F.sigmoid(self.conv2(x))
         #x=F.sigmoid(self.conv2(x))
         #x=x.view(-1,10)
