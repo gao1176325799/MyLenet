@@ -2,15 +2,29 @@ from save_load_network import load_all, FILE
 from alex_lib import torch
 from config import DEVICE
 from data_loaded import valid_loader
-
+import matplotlib.pyplot as plt
 loaded_model=load_all(FILE)
-loaded_model.eval()
+#loaded_model.eval()
 print(loaded_model)
 for name, param in loaded_model.named_parameters():
-        print('------------------------------')
-        print('name->',name,'<-')
-        print('parameters->',param,'<-')
-        print('------------------------------')
+    if name=='conv1.weight':
+        print('conv1 weight shape is',param.shape)
+        out_f,in_f,k_H,k_W=param.shape
+        print(out_f,in_f,k_H,k_W)
+        total_num_weight=out_f*in_f*k_H*k_W
+        p=param.detach().to('cpu').numpy()
+        print(p[0][0][0][0])
+        print(param[0][0][0][0].detach().to('cpu').numpy())
+        
+with torch.no_grad():
+    for name, param in loaded_model.named_parameters():
+        if name=='conv1.weight':
+            out_f,in_f,k_H,k_W=param.shape
+            print(out_f,in_f,k_H,k_W)
+            total_num_weight=out_f*in_f*k_H*k_W
+            print(param[0][0][0][0].detach().to('cpu').numpy())
+            param[0][0][0][0]=0.1
+            print(param[0][0][0][0].detach().to('cpu').numpy())
 
 
 
