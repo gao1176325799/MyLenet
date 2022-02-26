@@ -49,7 +49,7 @@ with torch.no_grad():
             n_samples+=labels.size(0)
             n_correct+=(predicted==labels).sum().item()
         acc=100*n_correct/n_samples#->9860/10000
-        print(f'Accuracy of the network:{acc}%')
+        print(f'Accuracy of the network before modify:{acc}%')
 
 # def search_action(param,action):
 #     def avg():
@@ -96,6 +96,7 @@ def para_m(parameters):
         n_correct=0
         n_samples=0
         for i,(images, labels) in enumerate (valid_loader):
+            #
             images=images.to(DEVICE)
             labels=labels.to(DEVICE)
             outputs=loaded_model(images)
