@@ -1,3 +1,4 @@
+
 from save_load_network import load_all, FILE
 from alex_lib import torch,np
 from config import DEVICE
@@ -50,8 +51,14 @@ with torch.no_grad():
         acc=100*n_correct/n_samples#->9860/10000
         print(f'Accuracy of the network:{acc}%')
 
-def search():
-    pass
+# def search_action(param,action):
+#     def avg():
+#         a,b,c,d=param.shape
+#         tot=a*b*c*d
+#         in_numpy=param.detach().to('cpu').numpy()
+#         in_numpy=np.reshape(in_numpy,(1,tot))
+#         for i in range(tot):
+
 
 def para_m(parameters):
     test=[0,0,0,0]
@@ -62,11 +69,12 @@ def para_m(parameters):
                 plot(name,param)
                 sum1=0
                 sum2=0
+                #get shape
                 out_f,in_f,k_H,k_W=param.shape
-                print(out_f,in_f,k_H,k_W)
+                #print(out_f,in_f,k_H,k_W)
                 total_num_weight=out_f*in_f*k_H*k_W
             
-                print(param[0][0][0][0].detach().to('cpu').numpy())
+                #print(param[0][0][0][0].detach().to('cpu').numpy())
                 p=param.detach().to('cpu').numpy()
                 p=np.reshape(p,(1,total_num_weight))
                 for i in range(total_num_weight):
