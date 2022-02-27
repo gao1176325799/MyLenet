@@ -59,6 +59,16 @@ with torch.no_grad():
 #         in_numpy=np.reshape(in_numpy,(1,tot))
 #         for i in range(tot):
 
+def quantize(max_r,min_r,input,bit_q):
+    unit=1/pow(2,bit_q)
+    output=0
+    if input >max_r:
+        output=max_r
+    elif input<min_r:
+        output=min_r
+    else:
+        output=int(input/unit)*unit
+    return output
 
 def para_m(parameters):
     test=[0,0,0,0]
@@ -85,7 +95,8 @@ def para_m(parameters):
                     for k in range(in_f):
                         for j in range(k_H):
                             for l in range(k_W):
-                                param[i][k][j][l]=(param[i][k][j][l]+2.5)/3.5
+                                param[i][k][j][l]=quantize(1,-1,param[i][k][j][l],4)
+                                #param[i][k][j][l]=(param[i][k][j][l]+2.5)/3.5
                 p=param.detach().to('cpu').numpy()
                 p=np.reshape(p,(1,total_num_weight))
                 for i in range(total_num_weight):
@@ -96,7 +107,7 @@ def para_m(parameters):
         n_correct=0
         n_samples=0
         for i,(images, labels) in enumerate (valid_loader):
-            #
+            
             images=images.to(DEVICE)
             labels=labels.to(DEVICE)
             outputs=loaded_model(images)
