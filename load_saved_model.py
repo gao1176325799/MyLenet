@@ -93,7 +93,7 @@ def para_m(parameters):
     test=[0,0,0,0]
     with torch.no_grad():
         for name, param in parameters:
-            if name=='conv1.weight':#later it will be all the weight
+            if (name=='conv1.weight') or (name=='conv2.weight') or (name=='conv3.weight'):#later it will be all the weight
                 print(f'Before modify')
                 plot(name,param)
                 sum1=0
@@ -138,7 +138,7 @@ def para_m(parameters):
         acc=100*n_correct/n_samples#->9860/10000
         print(f'Accuracy of the network:{acc}%')   
 
-#para_m(loaded_model.named_parameters())
+para_m(loaded_model.named_parameters())
 
 
 def para_m_pos(parameters):
@@ -146,7 +146,7 @@ def para_m_pos(parameters):
     test=[0,0,0,0]
     with torch.no_grad():
         for name, param in parameters:
-            if name=='conv1.weight':#later it will be all the weight
+            if (name=='conv1.weight') or (name=='conv2.weight') or (name=='conv3.weight'):#later it will be all the weight
                 print(f'Before modify')
                 plot(name,param)
                 sum1=0
@@ -191,7 +191,7 @@ def para_m_pos(parameters):
         acc=100*n_correct/n_samples#->9860/10000
         print(f'Accuracy of the network:{acc}%')  
 
-para_m_pos(loaded_model.named_parameters())
+#para_m_pos(loaded_model.named_parameters())
 test0=0
 if test0:
     with torch.no_grad():
