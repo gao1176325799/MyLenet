@@ -5,7 +5,7 @@ from config import DEVICE
 from data_loaded import valid_loader
 import matplotlib.pyplot as plt
 loaded_model=load_all(FILE)
-#loaded_model.eval()
+loaded_model.eval()
 print(loaded_model)
 def plot(name, param):
     dims = len(param[1].shape)
@@ -138,7 +138,7 @@ def para_m(parameters):
         acc=100*n_correct/n_samples#->9860/10000
         print(f'Accuracy of the network:{acc}%')   
 
-para_m(loaded_model.named_parameters())
+#para_m(loaded_model.named_parameters())
 
 
 def para_m_pos(parameters):
@@ -191,7 +191,7 @@ def para_m_pos(parameters):
         acc=100*n_correct/n_samples#->9860/10000
         print(f'Accuracy of the network:{acc}%')  
 
-#para_m_pos(loaded_model.named_parameters())
+para_m_pos(loaded_model.named_parameters())
 test0=0
 if test0:
     with torch.no_grad():
