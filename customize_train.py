@@ -13,7 +13,7 @@ for epoch in range(N_EPOCHS):
        #this for gives a batch at a time 
        #if batch is 20 and image size is 32,32, then the shape of images is 
        #20,1,32,32
-       images=images.to(DEVICE)
+       images=images.to(DEVICE)#move the data to the model location
        labels=labels.to(DEVICE)
        #forward pass
        outputs=model(images)

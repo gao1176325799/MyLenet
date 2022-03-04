@@ -1,6 +1,9 @@
 #from pickletools import optimize
 from alex_lib import *
 from config import DEVICE,LEARNING_RATE
+def test_func():
+    print('hello')
+    pass
 class Lenet5(nn.Module):
     def __init__(self):
         super(Lenet5,self).__init__()
@@ -19,10 +22,11 @@ class Lenet5(nn.Module):
         x = torch.flatten(x, 1)
         x=F.sigmoid(self.fc1(x))
         x=self.fc2(x)
+        test_func()
         return x
         
 def run_Lenet5():
-    model=Lenet5().to(DEVICE)
+    model=Lenet5().to(DEVICE)# move model to GPU
     criterion=nn.CrossEntropyLoss()
     optimizer=torch.optim.Adam(model.parameters(),lr=LEARNING_RATE)
     return model,criterion,optimizer
