@@ -1,5 +1,5 @@
 # parameters
-from alex_lib import torch
+from NN_lib import torch
 RANDOM_SEED = 42
 LEARNING_RATE = 0.002
 BATCH_SIZE = 20

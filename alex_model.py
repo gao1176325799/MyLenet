@@ -1,9 +1,11 @@
 #from pickletools import optimize
-from alex_lib import *
+from NN_lib import *
 from config import DEVICE,LEARNING_RATE
-def test_func():
-    print('hello')
-    pass
+def test_func(a):
+    a+=1
+    if a%100==0:
+        print('hello@',a)
+    return a
 class Lenet5(nn.Module):
     def __init__(self):
         super(Lenet5,self).__init__()
@@ -14,6 +16,7 @@ class Lenet5(nn.Module):
         self.conv3=nn.Conv2d(in_channels=16,out_channels=120,kernel_size=5,stride=1)
         self.fc1=nn.Linear(in_features=120,out_features=84)
         self.fc2=nn.Linear(in_features=84,out_features=10)
+        self.index=int(0)
     def forward(self,x):
         x=self.pool(F.sigmoid(self.conv1(x)))
         x=self.pool2(F.sigmoid(self.conv2(x)))
@@ -22,7 +25,8 @@ class Lenet5(nn.Module):
         x = torch.flatten(x, 1)
         x=F.sigmoid(self.fc1(x))
         x=self.fc2(x)
-        test_func()
+        index=self.index
+        self.index=test_func(index)
         return x
         
 def run_Lenet5():

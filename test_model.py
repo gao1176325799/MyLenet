@@ -1,4 +1,4 @@
-from alex_lib import *
+from NN_lib import *
 from config import DEVICE,LEARNING_RATE
 class test_model(nn.Module):
     def __init__(self):

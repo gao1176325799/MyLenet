@@ -1,4 +1,4 @@
-from alex_lib import torch
+from NN_lib import torch
 FILE="model.pth"
 method=0
 #0-> not save 
