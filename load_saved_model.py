@@ -9,35 +9,12 @@ loaded_model=load_all(FILE)
 loaded_model.eval()
 print(loaded_model)
 
-# with torch.no_grad():
-#         n_correct=0
-#         n_samples=0
-#         for i,(images, labels) in enumerate (valid_loader):
-#             images=images.to(DEVICE)
-#             labels=labels.to(DEVICE)
-#             outputs=loaded_model(images)
-#             _,predicted=torch.max(outputs,1)
-#             n_samples+=labels.size(0)
-#             n_correct+=(predicted==labels).sum().item()
-#         acc=100*n_correct/n_samples#->9860/10000
-#         print(f'Accuracy of the network before modify:{acc}%')
-get_size(loaded_model)
-# def search_action(param,action):
-#     def avg():
-#         a,b,c,d=param.shape
-#         tot=a*b*c*d
-#         in_numpy=param.detach().to('cpu').numpy()
-#         in_numpy=np.reshape(in_numpy,(1,tot))
-#         for i in range(tot):
+
+run_without_change(loaded_model)
 
 
 
-#para_m(loaded_model.named_parameters(),loaded_model)
 
-
-
-#para_m_pos(loaded_model.named_parameters(),loaded_model)
-get_size(loaded_model)
 test0=0
 if test0:
     with torch.no_grad():
@@ -80,11 +57,3 @@ if test0:
             n_correct+=(predicted==labels).sum().item()
         acc=100*n_correct/n_samples#->9860/10000
         print(f'Accuracy of the network:{acc}%')    
-
-    
-
-
-
-
-
-

@@ -3,7 +3,7 @@ from NN_lib import torch,np
 from config import DEVICE
 from data_loaded import valid_loader
 from Utility_LSM import *
-def get_size(loaded_model):
+def run_without_change(loaded_model):
     with torch.no_grad():
         n_correct=0
         n_samples=0
