@@ -16,8 +16,8 @@ class Lenet5(nn.Module):
         self.conv3=nn.Conv2d(in_channels=16,out_channels=120,kernel_size=5,stride=1)
         self.fc1=nn.Linear(in_features=120,out_features=84)
         self.fc2=nn.Linear(in_features=84,out_features=10)
-        self.index=int(0)
-    def forward(self,x):
+        self.index=0
+    def forward(self,x,TRIGGERed):
         x=self.pool(F.sigmoid(self.conv1(x)))
         x=self.pool2(F.sigmoid(self.conv2(x)))
         x=F.sigmoid(self.conv3(x))
@@ -27,6 +27,8 @@ class Lenet5(nn.Module):
         x=self.fc2(x)
         index=self.index
         self.index=test_func(index)
+        if TRIGGERed:
+            print('triggered')
         return x
         
 def run_Lenet5():

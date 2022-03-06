@@ -13,7 +13,8 @@ for epoch in range(N_EPOCHS):
        images=images.to(DEVICE)
        labels=labels.to(DEVICE)
        #forward pass
-       outputs=model(images)
+       #!Critical update on Mar 5th, the trigger been added in to model(Alex_model.py)
+       outputs=model(images,0)
        loss=criterion(outputs,labels)
        #backward and optimize
        optimizer.zero_grad()

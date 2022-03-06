@@ -11,7 +11,7 @@ print(loaded_model)
 
 
 run_without_change(loaded_model)
-
+para_m(loaded_model.named_parameters(),loaded_model)
 
 
 

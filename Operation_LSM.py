@@ -10,7 +10,7 @@ def run_without_change(loaded_model):
         for i,(images, labels) in enumerate (valid_loader):
             images=images.to(DEVICE)
             labels=labels.to(DEVICE)
-            outputs=loaded_model(images)
+            outputs=loaded_model(images,0)
             _,predicted=torch.max(outputs,1)
             n_samples+=labels.size(0)
             n_correct+=(predicted==labels).sum().item()
@@ -60,7 +60,7 @@ def para_m_pos(parameters,loaded_model):
             
             images=images.to(DEVICE)
             labels=labels.to(DEVICE)
-            outputs=loaded_model(images)
+            outputs=loaded_model(images,0)
             _,predicted=torch.max(outputs,1)
             n_samples+=labels.size(0)
             n_correct+=(predicted==labels).sum().item()
@@ -110,7 +110,7 @@ def para_m(parameters,loaded_model):
             
             images=images.to(DEVICE)
             labels=labels.to(DEVICE)
-            outputs=loaded_model(images)
+            outputs=loaded_model(images,1)
             _,predicted=torch.max(outputs,1)
             n_samples+=labels.size(0)
             n_correct+=(predicted==labels).sum().item()
