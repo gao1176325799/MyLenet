@@ -11,7 +11,8 @@ print(loaded_model)
 
 
 run_without_change(loaded_model)
-para_m(loaded_model.named_parameters(),loaded_model)
+run_with_My_conv2d(loaded_model)
+#para_m(loaded_model.named_parameters(),loaded_model)
 
 
 

@@ -17,6 +17,20 @@ def run_without_change(loaded_model):
         acc=100*n_correct/n_samples#->9860/10000
         print(f'Accuracy of the network before modify:{acc}%')
 
+def run_with_My_conv2d(loaded_model):
+    with torch.no_grad():
+        n_correct=0
+        n_samples=0
+        for i,(images, labels) in enumerate (valid_loader):
+            images=images.to(DEVICE)
+            labels=labels.to(DEVICE)
+            outputs=loaded_model(images,1)
+            _,predicted=torch.max(outputs,1)
+            n_samples+=labels.size(0)
+            n_correct+=(predicted==labels).sum().item()
+        acc=100*n_correct/n_samples#->9860/10000
+        print(f'Accuracy of the network before modify:{acc}%')
+
 def para_m_pos(parameters,loaded_model):
     #* using[0,1]quantization
     test=[0,0,0,0]

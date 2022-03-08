@@ -16,7 +16,7 @@ for epoch in range(N_EPOCHS):
        images=images.to(DEVICE)#move the data to the model location
        labels=labels.to(DEVICE)
        #forward pass
-       outputs=model(images)
+       outputs=model(images,0)
        if test0:
            print('In test 0')
            print('images size:',images.detach().to('cpu').numpy().shape)
@@ -39,7 +39,7 @@ with torch.no_grad():
     for i,(images, labels) in enumerate (valid_loader):
         images=images.to(DEVICE)
         labels=labels.to(DEVICE)
-        outputs=model(images)
+        outputs=model(images,0)
         _,predicted=torch.max(outputs,1)
         n_samples+=labels.size(0)
         n_correct+=(predicted==labels).sum().item()
