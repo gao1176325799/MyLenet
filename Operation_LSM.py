@@ -8,9 +8,11 @@ def run_without_change(loaded_model):
         n_correct=0
         n_samples=0
         for i,(images, labels) in enumerate (valid_loader):
+            #print(images.shape)
             images=images.to(DEVICE)
             labels=labels.to(DEVICE)
-            outputs=loaded_model(images,0)
+            #print(images.shape)
+            outputs=loaded_model(images,0,1)
             _,predicted=torch.max(outputs,1)
             n_samples+=labels.size(0)
             n_correct+=(predicted==labels).sum().item()
@@ -24,10 +26,12 @@ def run_with_My_conv2d(loaded_model):
         for i,(images, labels) in enumerate (valid_loader):
             images=images.to(DEVICE)
             labels=labels.to(DEVICE)
-            outputs=loaded_model(images,1)
+            outputs=loaded_model(images,1,1)
             _,predicted=torch.max(outputs,1)
             n_samples+=labels.size(0)
             n_correct+=(predicted==labels).sum().item()
+            if n_samples%20==0:
+                print('progress:',n_samples/10000,'%')
         acc=100*n_correct/n_samples#->9860/10000
         print(f'Accuracy of the network before modify:{acc}%')
 

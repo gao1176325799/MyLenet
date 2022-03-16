@@ -7,4 +7,5 @@ N_EPOCHS = 5
 
 IMG_SIZE = 32
 N_CLASSES = 10
-DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'
+DEVICE ='cpu'
+#DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'
