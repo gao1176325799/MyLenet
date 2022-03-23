@@ -16,6 +16,23 @@ def run_without_change(loaded_model):
             _,predicted=torch.max(outputs,1)
             n_samples+=labels.size(0)
             n_correct+=(predicted==labels).sum().item()
+            if n_samples==100:
+                break
+        acc=100*n_correct/n_samples#->9860/10000
+        print(f'Accuracy of the network using nn.conv2d:{acc}%')
+def run_without_change_dig_gpu(loaded_model):
+    with torch.no_grad():
+        n_correct=0
+        n_samples=0
+        for i,(images, labels) in enumerate (valid_loader):
+            print('before go to device',images.shape)
+            images=images.to(DEVICE)
+            labels=labels.to(DEVICE)
+            print('after push to device',images.shape)
+            outputs=loaded_model(images,0,1)
+            _,predicted=torch.max(outputs,1)
+            n_samples+=labels.size(0)
+            n_correct+=(predicted==labels).sum().item()
         acc=100*n_correct/n_samples#->9860/10000
         print(f'Accuracy of the network before modify:{acc}%')
 
@@ -31,10 +48,12 @@ def run_with_My_conv2d(loaded_model):
             n_samples+=labels.size(0)
             n_correct+=(predicted==labels).sum().item()
             if n_samples%20==0:
-                print('progress:',n_samples/10000,'%')
+                print('progress:',n_samples,'%')
+            if n_samples==100:
+                break
         acc=100*n_correct/n_samples#->9860/10000
-        print(f'Accuracy of the network before modify:{acc}%')
-
+        print(f'Accuracy of the network using my conv2d:{acc}%')
+#! use less 
 def para_m_pos(parameters,loaded_model):
     #* using[0,1]quantization
     test=[0,0,0,0]
@@ -92,7 +111,7 @@ def para_m(parameters,loaded_model):
         for name, param in parameters:
             if (name=='conv1.weight') or (name=='conv2.weight') or (name=='conv3.weight'):#later it will be all the weight
                 print(f'Before modify')
-                plot(name,param)
+                #plot(name,param)
                 sum1=0
                 sum2=0
                 #get shape
@@ -107,8 +126,8 @@ def para_m(parameters,loaded_model):
                     sum1+=p[0][i]
                 avg1=sum1/total_num_weight
                 min_=find_min(p)
-                print('before modify the avg is:',avg1)
-                print('before modify the min is:',min_)
+                #print('before modify the avg is:',avg1)
+                #print('before modify the min is:',min_)
                 for i in range(out_f):
                     for k in range(in_f):
                         for j in range(k_H):
@@ -120,17 +139,23 @@ def para_m(parameters,loaded_model):
                 for i in range(total_num_weight):
                     sum2+=p[0][i]
                 avg2=sum2/total_num_weight
-                plot(name,param)
-                print('after modify avg is:',avg2)
+                #plot(name,param)
+                #print('after modify avg is:',avg2)
+            else:
+                print(name)
         n_correct=0
         n_samples=0
         for i,(images, labels) in enumerate (valid_loader):
             
             images=images.to(DEVICE)
             labels=labels.to(DEVICE)
-            outputs=loaded_model(images,1)
+            outputs=loaded_model(images,0,0)
             _,predicted=torch.max(outputs,1)
             n_samples+=labels.size(0)
             n_correct+=(predicted==labels).sum().item()
+            if n_samples%20==0:
+                print('progress:',n_samples,'%')
+            if n_samples==100:
+                break
         acc=100*n_correct/n_samples#->9860/10000
         print(f'Accuracy of the network:{acc}% with total {n_samples} samples')   

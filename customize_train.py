@@ -1,8 +1,7 @@
 from alex_model import*
-from test_model import*
-from config import BATCH_SIZE, N_EPOCHS
+from config import BATCH_SIZE, N_EPOCHS,FILE_model,FILE_state
 from data_loaded import train_loader,valid_loader
-from save_load_network import FILE,save_all
+from save_load_network import save_load_method
 n_total_steps=len(train_loader)# used to support to calculate the step accuracy
 
 model,criterion,optimizer=run_test_model()
@@ -39,10 +38,13 @@ with torch.no_grad():
     for i,(images, labels) in enumerate (valid_loader):
         images=images.to(DEVICE)
         labels=labels.to(DEVICE)
-        outputs=model(images,0,0)
+        outputs=model(images,0,1)
         _,predicted=torch.max(outputs,1)
         n_samples+=labels.size(0)
         n_correct+=(predicted==labels).sum().item()
     acc=100*n_correct/n_samples
     print(f'Accuracy of the network:{acc}%')
-save_all(model,FILE)
+
+#save_load_method(save_or_load="save",method="all",model=model,FILE_path=FILE_model)
+save_load_method(save_or_load="save",method="state",model=model,FILE_path=FILE_state)
+
