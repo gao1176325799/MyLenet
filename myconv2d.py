@@ -1,8 +1,10 @@
 from NN_lib import *
 from NN_lib import _pair
+import glo
 from torch.nn.common_types import _size_2_t
 from typing import Union
-from config import f_comb
+#from config import set_value,get_val
+
 def ocupied(comb_list,d,num):
     #find out if the num exist in comb[d]
   if comb_list[d]:
@@ -42,6 +44,7 @@ def sort_w(weight,unit):
 def sort_v2(weight,unit):#weight is a tensor
     d,c,k,j=weight.shape
     comb=[]
+    old_diff=0
     for dd in range(d):
         temp_weight=weight[dd]
         temp_weight=temp_weight.reshape(c*k*j)
@@ -49,15 +52,8 @@ def sort_v2(weight,unit):#weight is a tensor
         #next we are going to make sorted and indices as tuple
         #before that its need to convert to numpy array
         sorted_=sorted_.numpy()
-        
         indices=indices.numpy()
-        
-        #! check if sorted is pushed to cpu
-        # print(sorted_.shape)
-        # arr=np.array((sorted,indices)).T
-        # print(arr.shape)
         zipped=list(zip(sorted_,indices))
-        #zipped=list(zipped)
         temp=0
         for i in range(len(sorted_)):
             if sorted_[i]>=0:
@@ -65,15 +61,8 @@ def sort_v2(weight,unit):#weight is a tensor
                 break
         neg_s=zipped[:temp]
         pos_s=zipped[temp:]
-        #print('neg part\n',neg_s)
-        #print('pos part\n',pos_s)
         #next step resort the negs part as descending
         neg_s=sorted(neg_s,key=lambda x:x[0],reverse=True)
-        #print(len(neg_s))
-        #print('new neg_s\n',neg_s)
-        #to access the tuple
-        # val,loc=neg_s[0]
-        # print(val,loc)
         #so far we got a descending neg seq and a ascending pos seq
         n_ptr,p_ptr,p_ptr_bound=0,0,0
         cb1=[]
@@ -83,13 +72,17 @@ def sort_v2(weight,unit):#weight is a tensor
             p_val,p_loc=pos_s[p_ptr]
             while (n_val+p_val)<=unit and p_ptr<len(pos_s):#stop when p_val is too big or p_ptr reach the maximum
                 p_val,p_loc=pos_s[p_ptr]
-                if abs(n_val+p_val)<=unit:
+                diff = abs(n_val+p_val)
+                if diff<=unit:
                     if n_loc<p_loc:
                         cb1.append(n_loc)
                         cb2.append(p_loc)
                     else:
                         cb1.append(p_loc)
                         cb2.append(n_loc)
+                    if diff>old_diff:
+                        old_diff=diff
+                        #print("{:4f}".format(n_val),"{:4f}".format(p_val),"{:4f}".format(diff),"--loc-->",n_loc,p_loc)
                     p_ptr_bound=p_ptr+1#set the new boundary
                     break #stop the current while loop, go find the next combination
                 p_ptr+=1
@@ -97,7 +90,8 @@ def sort_v2(weight,unit):#weight is a tensor
             p_ptr=p_ptr_bound
         #at this point the location for combinations are stored at n_comb and p_comb
         cb_comb=list(zip(cb1,cb2))
-        cb_comb=sorted(cb_comb,key=lambda x:x[0],reverse=False) #sort the combinations along first element
+        cb_comb=sorted(cb_comb,key=lambda x:x[0],reverse=False) 
+        #sort the combinations along first element
         cb_comb=[item for sublist in cb_comb for item in sublist]
         comb.append(cb_comb)
     return comb
@@ -108,7 +102,10 @@ def vicsum_v2(inseq_after_pad,weight):
   n,c,h,w,k,j=inseq_after_pad.shape
   d,c,k,j=weight.shape
   out=torch.zeros(n,d,h,w)
+  start=time.time()
   comb=sort_w(weight,0.0001)
+  end=time.time()
+  print('time elapse for sort:',end-start)
   for nn in range(n):
     for dd in range(d):
       for hh in range(h):
@@ -152,10 +149,12 @@ def vicsum_v3(inseq_after_pad,weight):#a faster version
   n,c,h,w,k,j=inseq_after_pad.shape
   d,_,_,_=weight.shape
   out=torch.zeros(n,d,h,w)
-  start=time.time()
-  comb=sort_v2(weight,0.00001)
-  end=time.time()
-  print('time elapse for sort:',end-start)
+  # start=time.time()
+  comb=sort_v2(weight,0.5)
+  count=0
+  
+  # end=time.time()
+  # print('time elapse for sort:',end-start)
   for nn in range(n):
     for dd in range(d):
       for hh in range(h):
@@ -170,14 +169,15 @@ def vicsum_v3(inseq_after_pad,weight):#a faster version
           temp_weight_list=list(chain.from_iterable(temp_weight_list))#from 3d->2d
           temp_weight_list=list(chain.from_iterable(temp_weight_list))#from 2d->1d
           templist=[]
-          while FLAG:
-            if comb[dd]:#if comb exist
-              pos1,pos2=extract(comb,dd)
-              out[nn,dd,hh,ww]+=(temp_inseq_list[pos1]-temp_inseq_list[pos2])*temp_weight_list[pos1]
-              templist.append(pos1)
-              templist.append(pos2)
-            else:#if no more comb avaliable
-              FLAG=0
+          for i in range (0,len(comb[dd]),2):
+            pos1=comb[dd][i]
+            pos2=comb[dd][i+1]
+            out[nn,dd,hh,ww]+=(temp_inseq_list[pos1]-temp_inseq_list[pos2])*temp_weight_list[pos1]
+            glo.set_value(0,glo.get_value(0)+1)
+            glo.set_value(1,glo.get_value(1)+1)
+            glo.set_value(2,glo.get_value(2)+1)
+            templist.append(pos1)
+            templist.append(pos2)
           counter=0 
           templist.sort()
           for ele in templist:
@@ -185,17 +185,16 @@ def vicsum_v3(inseq_after_pad,weight):#a faster version
             del temp_inseq_list[ele]
             del temp_weight_list[ele]
             counter+=1
-          while len(temp_inseq_list)>0:#if stil have input and weight
-            out[nn,dd,hh,ww]+=temp_inseq_list[0]*temp_weight_list[0]
-            del temp_inseq_list[0]
-            del temp_weight_list[0]
-          #check if both list are empty
-          assert len(temp_inseq_list)==0,'the inseq list is not empty'
-          assert len(temp_weight_list)==0,'the weight list is not empty'  
+          ptr=0
+          while ptr<len(temp_inseq_list):
+            out[nn,dd,hh,ww]+=temp_inseq_list[ptr]*temp_weight_list[ptr]
+            ptr+=1
+            glo.set_value(0,glo.get_value(0)+1)
+            glo.set_value(2,glo.get_value(2)+1)  
   return out
 
 def myconv2dv2(x,weight,bias,stride,pad):
-  
+  #extract params in tensor
   n,c_in,h_in,w_in=x.shape
   d,c_w,k,j=weight.shape
   x_pad=torch.zeros(n,c_in,h_in+2*pad[0],w_in+2*pad[0])
@@ -206,17 +205,9 @@ def myconv2dv2(x,weight,bias,stride,pad):
   #double unfold-->window sliding based on kernel size
   x_pad=x_pad.unfold(2,k,stride[0])
   x_pad=x_pad.unfold(3,j,stride[0])
-  #print(x_pad.shape)
   n,c_in,h_in,w_in,k,j=x_pad.shape
-  #now we replace einsum with vicsum
-  #out=torch.einsum('nchwkj,dckj->ndhw',x_pad,weight)
-  s=time.time()
   out=vicsum_v3(x_pad,weight)
-  e=time.time()
-  print('time elapsed in vicsum:',e-s)
-  #print('out',out.shape)
   out=out+bias.view(1,-1,1,1)
-  #print(out.shape)
   return out
 
 class MYconv2d(nn.modules.conv._ConvNd):

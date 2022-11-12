@@ -22,13 +22,16 @@ def plot(name, param):
 
     plt.xlabel('x')
     plt.ylabel('y')
-
-    l1 = plt.scatter(x, y, marker='.')
+    shrink=1
+    if len(y)>10000:
+        shrink=len(y)//4000
+    print(len(y),shrink)
+    l1 = plt.scatter(x[::shrink], y[::shrink], marker='.',s=10)
     l2 = plt.scatter(x_min, y_min, marker='x', color='red')
     l3 = plt.scatter(x_max, y_max, marker='x', color='red')
 
     plt.legend(handles=[l1, l2, l3], labels=[name, 'min: ' + str(y_min), 'max: ' + str(y_max)], loc='best')
-
+    plt.savefig('./results/pic-{}.png'.format(name))
     
 
     plt.show()

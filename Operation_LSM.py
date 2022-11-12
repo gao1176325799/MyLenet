@@ -3,7 +3,9 @@ from NN_lib import torch,np
 from config import DEVICE
 from data_loaded import valid_loader
 from Utility_LSM import *
-def run_without_change(loaded_model):
+
+def run_without_change(loaded_model,samples):
+    factor=int(samples/10)
     with torch.no_grad():
         n_correct=0
         n_samples=0
@@ -16,11 +18,12 @@ def run_without_change(loaded_model):
             _,predicted=torch.max(outputs,1)
             n_samples+=labels.size(0)
             n_correct+=(predicted==labels).sum().item()
-            if n_samples==100:
+            if n_samples==samples:
                 break
         acc=100*n_correct/n_samples#->9860/10000
         print(f'Accuracy of the network using nn.conv2d:{acc}%')
 def run_without_change_dig_gpu(loaded_model):
+    
     with torch.no_grad():
         n_correct=0
         n_samples=0
@@ -36,7 +39,8 @@ def run_without_change_dig_gpu(loaded_model):
         acc=100*n_correct/n_samples#->9860/10000
         print(f'Accuracy of the network before modify:{acc}%')
 
-def run_with_My_conv2d(loaded_model):
+def run_with_My_conv2d(loaded_model,samples):
+    factor=int(samples/10)
     with torch.no_grad():
         n_correct=0
         n_samples=0
@@ -47,9 +51,9 @@ def run_with_My_conv2d(loaded_model):
             _,predicted=torch.max(outputs,1)
             n_samples+=labels.size(0)
             n_correct+=(predicted==labels).sum().item()
-            if n_samples%20==0:
-                print('progress:',n_samples,'%')
-            if n_samples==100:
+            if n_samples%factor==0:
+                print('progress:',n_samples/samples*100,'%')
+            if n_samples==samples:
                 break
         acc=100*n_correct/n_samples#->9860/10000
         print(f'Accuracy of the network using my conv2d:{acc}%')

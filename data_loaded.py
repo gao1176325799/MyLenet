@@ -44,7 +44,7 @@ test1=0
 if test1:
     index=0
     max=0
-    for i,(images,labels) in enumerate(valid_loader):
+    for i,(images,labels) in enumerate(train_loader):
         if i<5:
             print('###images:',images.detach().numpy(),'###images:',images.detach().numpy().shape)#batch size 个副图的数据
             x=images.detach().numpy()
@@ -53,5 +53,5 @@ if test1:
             print('@@@labels:',labels)#32个tensor
             print('###################################')
         index+=1
-    print('Total samples in valid loader:',index)
+    print('Total samples in valid loader:',index*BATCH_SIZE)
         

@@ -1,9 +1,9 @@
 # parameters
 from NN_lib import torch
 RANDOM_SEED     = 42
-LEARNING_RATE   = 0.002
-BATCH_SIZE      = 1
-N_EPOCHS        = 1
+LEARNING_RATE   = 0.001
+BATCH_SIZE      = 2
+N_EPOCHS        = 10
 
 IMG_SIZE        = 32
 N_CLASSES       = 10

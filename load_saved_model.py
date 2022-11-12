@@ -4,13 +4,14 @@ from alex_model import *
 from Utility_LSM import *
 from save_load_network import save_load_method
 from NN_lib import torch,np
+import glo
 from config import DEVICE,FILE_state,FILE_model
 from data_loaded import valid_loader
 import matplotlib.pyplot as plt
 import xlwt
-
-
-model,_,_=run_test_model()
+# from config import set_value,get_val
+#model,_,_=run_test_model()
+model,_,_=run_Lenet5()
 #load trained model
 #loaded_model=save_load_method(save_or_load="load",method="all",FILE_path=FILE_model)
 loaded_model=save_load_method(save_or_load="load",method="state",model=model,FILE_path=FILE_state)
@@ -19,18 +20,25 @@ print(loaded_model)
 # print('param start')
 #para_m(loaded_model.named_parameters(),loaded_model)
 
-
+glo._init()
 
 #_____________________________
 print('with myconv2d start')
-loaded_model.myconv1.bias.data=loaded_model.conv1.bias.data
-loaded_model.myconv2.bias.data=loaded_model.conv2.bias.data
-loaded_model.myconv1.weight.data=loaded_model.conv1.weight.data
-loaded_model.myconv2.weight.data=loaded_model.conv2.weight.data
+loaded_model.my_conv1.bias.data=loaded_model.conv1.bias.data
+loaded_model.my_conv2.bias.data=loaded_model.conv2.bias.data
+loaded_model.my_conv3.bias.data=loaded_model.conv3.bias.data
+loaded_model.my_conv1.weight.data=loaded_model.conv1.weight.data
+loaded_model.my_conv2.weight.data=loaded_model.conv2.weight.data
+loaded_model.my_conv3.weight.data=loaded_model.conv3.weight.data
 
-run_with_My_conv2d(loaded_model)
+run_with_My_conv2d(loaded_model,1000)
+
+add_val=glo.get_value(0)
+sub_val=glo.get_value(1)
+mul_val=glo.get_value(2)
+print(add_val,sub_val,mul_val)
 print('original start')
-run_without_change(loaded_model)
+run_without_change(loaded_model,1000)
 #__________________________
 
 

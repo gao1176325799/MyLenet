@@ -2,11 +2,13 @@ from alex_model import*
 from config import BATCH_SIZE, N_EPOCHS,FILE_model,FILE_state
 from data_loaded import train_loader,valid_loader
 from save_load_network import save_load_method
+from Utility_LSM import plot
 n_total_steps=len(train_loader)# used to support to calculate the step accuracy
 
-model,criterion,optimizer=run_test_model()
-#model,criterion,optimizer=run_Lenet5()
+#model,criterion,optimizer=run_test_model()
+model,criterion,optimizer=run_Lenet5()
 test0=0
+
 for epoch in range(N_EPOCHS):
    for i, (images, labels) in enumerate(train_loader):
        #this for gives a batch at a time 
@@ -48,3 +50,9 @@ with torch.no_grad():
 #save_load_method(save_or_load="save",method="all",model=model,FILE_path=FILE_model)
 save_load_method(save_or_load="save",method="state",model=model,FILE_path=FILE_state)
 
+for name, param in model.named_parameters():
+    print('------------------------------')
+    print(name)
+    print(param)
+    plot(name, param)
+    print('------------------------------')

@@ -1,13 +1,12 @@
 #Traninng dataset is 60000 images or samples
 #batch size is 32. Iteration=60000xepochs/32
 from alex_model import*
-from test_model import*
 from config import BATCH_SIZE, N_EPOCHS
 from data_loaded import train_loader,valid_loader
 n_total_steps=len(train_loader)# used to support to calculate the step accuracy
 
-model,criterion,optimizer=run_test_model()
-
+#model,criterion,optimizer=run_test_model()
+model,criterion,optimizer=run_Lenet5()
 for epoch in range(N_EPOCHS):
    for i, (images, labels) in enumerate(train_loader):
        images=images.to(DEVICE)
