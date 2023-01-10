@@ -46,14 +46,15 @@ def sort_v2(weight,unit):#weight is a tensor
     comb=[]
     old_diff=0
     for dd in range(d):
-        temp_weight=weight[dd]
+        temp_weight=weight[dd]#temp_weight tensor,torch.float32
         temp_weight=temp_weight.reshape(c*k*j)
-        sorted_,indices=torch.sort(temp_weight,stable=True)
+        sorted_,indices=torch.sort(temp_weight,stable=True)#both sorted_ and indices are tensor, torch.float32
         #next we are going to make sorted and indices as tuple
         #before that its need to convert to numpy array
         sorted_=sorted_.numpy()
-        indices=indices.numpy()
+        indices=indices.numpy()#now they change to array
         zipped=list(zip(sorted_,indices))
+        print(type(zipped))
         temp=0
         for i in range(len(sorted_)):
             if sorted_[i]>=0:
@@ -98,52 +99,52 @@ def sort_v2(weight,unit):#weight is a tensor
 
 
 
-def vicsum_v2(inseq_after_pad,weight):
-  n,c,h,w,k,j=inseq_after_pad.shape
-  d,c,k,j=weight.shape
-  out=torch.zeros(n,d,h,w)
-  start=time.time()
-  comb=sort_w(weight,0.0001)
-  end=time.time()
-  print('time elapse for sort:',end-start)
-  for nn in range(n):
-    for dd in range(d):
-      for hh in range(h):
-        for ww in range(w):
-          FLAG=1#initialize internal flag
-          # 0->no more comb thus no need to enquire new comb
-          # 1->looking for ckj meets the comb
-          temp_inseq_list=inseq_after_pad[nn,:,hh,ww].numpy().tolist()
-          temp_inseq_list=list(chain.from_iterable(temp_inseq_list))#from 3d->2d
-          temp_inseq_list=list(chain.from_iterable(temp_inseq_list))#from 2d->1d
-          temp_weight_list=weight[dd].numpy().tolist()
-          temp_weight_list=list(chain.from_iterable(temp_weight_list))#from 3d->2d
-          temp_weight_list=list(chain.from_iterable(temp_weight_list))#from 2d->1d
-          templist=[]
-          while FLAG:
-            if comb[dd]:#if comb exist
-              pos1,pos2=extract(comb,dd)
-              out[nn,dd,hh,ww]+=(temp_inseq_list[pos1]-temp_inseq_list[pos2])*temp_weight_list[pos1]
-              templist.append(pos1)
-              templist.append(pos2)
-            else:#if no more comb avaliable
-              FLAG=0
-          counter=0 
-          templist.sort()
-          for ele in templist:
-            ele=ele-counter
-            del temp_inseq_list[ele]
-            del temp_weight_list[ele]
-            counter+=1
-          while len(temp_inseq_list)>0:#if stil have input and weight
+# def vicsum_v2(inseq_after_pad,weight):
+#   n,c,h,w,k,j=inseq_after_pad.shape
+#   d,c,k,j=weight.shape
+#   out=torch.zeros(n,d,h,w)
+#   start=time.time()
+#   comb=sort_w(weight,0.0001)
+#   end=time.time()
+#   print('time elapse for sort:',end-start)
+#   for nn in range(n):
+#     for dd in range(d):
+#       for hh in range(h):
+#         for ww in range(w):
+#           FLAG=1#initialize internal flag
+#           # 0->no more comb thus no need to enquire new comb
+#           # 1->looking for ckj meets the comb
+#           temp_inseq_list=inseq_after_pad[nn,:,hh,ww].numpy().tolist()
+#           temp_inseq_list=list(chain.from_iterable(temp_inseq_list))#from 3d->2d
+#           temp_inseq_list=list(chain.from_iterable(temp_inseq_list))#from 2d->1d
+#           temp_weight_list=weight[dd].numpy().tolist()
+#           temp_weight_list=list(chain.from_iterable(temp_weight_list))#from 3d->2d
+#           temp_weight_list=list(chain.from_iterable(temp_weight_list))#from 2d->1d
+#           templist=[]
+#           while FLAG:
+#             if comb[dd]:#if comb exist
+#               pos1,pos2=extract(comb,dd)
+#               out[nn,dd,hh,ww]+=(temp_inseq_list[pos1]-temp_inseq_list[pos2])*temp_weight_list[pos1]
+#               templist.append(pos1)
+#               templist.append(pos2)
+#             else:#if no more comb avaliable
+#               FLAG=0
+#           counter=0 
+#           templist.sort()
+#           for ele in templist:
+#             ele=ele-counter
+#             del temp_inseq_list[ele]
+#             del temp_weight_list[ele]
+#             counter+=1
+#           while len(temp_inseq_list)>0:#if stil have input and weight
             
-            out[nn,dd,hh,ww]+=temp_inseq_list[0]*temp_weight_list[0]
-            del temp_inseq_list[0]
-            del temp_weight_list[0]
-          #check if both list are empty
-          assert len(temp_inseq_list)==0,'the inseq list is not empty'
-          assert len(temp_weight_list)==0,'the weight list is not empty'  
-  return out
+#             out[nn,dd,hh,ww]+=temp_inseq_list[0]*temp_weight_list[0]
+#             del temp_inseq_list[0]
+#             del temp_weight_list[0]
+#           #check if both list are empty
+#           assert len(temp_inseq_list)==0,'the inseq list is not empty'
+#           assert len(temp_weight_list)==0,'the weight list is not empty'  
+#   return out
 
 def vicsum_v3(inseq_after_pad,weight):#a faster version
   n,c,h,w,k,j=inseq_after_pad.shape
@@ -204,9 +205,9 @@ def myconv2dv2(x,weight,bias,stride,pad):
     x_pad=x
   #double unfold-->window sliding based on kernel size
   x_pad=x_pad.unfold(2,k,stride[0])
-  x_pad=x_pad.unfold(3,j,stride[0])
+  x_pad=x_pad.unfold(3,j,stride[0])#xpad type=torch.float32 device CPU
   n,c_in,h_in,w_in,k,j=x_pad.shape
-  out=vicsum_v3(x_pad,weight)
+  out=vicsum_v3(x_pad,weight)#weight same as xpad with different size
   out=out+bias.view(1,-1,1,1)
   return out
 
